@@ -90,7 +90,7 @@ class PaymentController extends Controller
         $payment->update($validated);
 
         return redirect()->route('students.payments.index', $student)
-            ->with('success', 'Paiement modifié avec succès.');
+            ->with('success', 'تم تعديل الدفع بنجاح.');
     }
 
     /**
@@ -101,7 +101,7 @@ class PaymentController extends Controller
         $payment->delete();
 
         return redirect()->route('students.payments.index', $student)
-            ->with('success', 'Paiement supprimé avec succès.');
+            ->with('success', 'تم إلغاء الدفع بنجاح.');
     }
 
     /**
@@ -115,7 +115,7 @@ class PaymentController extends Controller
         ]);
 
         return redirect()->route('students.payments.index', $student)
-            ->with('success', 'Paiement marqué comme payé.');
+            ->with('success', 'تم وضع علامة على الدفع كمدفوع.');
     }
 
     /**
@@ -126,6 +126,6 @@ class PaymentController extends Controller
         $payment->update(['status' => 'overdue']);
 
         return redirect()->route('students.payments.index', $student)
-            ->with('success', 'Paiement marqué comme en retard.');
+            ->with('success', 'تم وضع علامة على الدفع كمتأخر.');
     }
 }
