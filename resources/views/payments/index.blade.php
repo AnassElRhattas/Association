@@ -1,0 +1,150 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Students List') }}
+            </h2>
+            <a href="{{ route('students.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                {{ __('Add New Student') }}
+            </a>
+        </div>
+    </x-slot>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <!-- En-tête -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">
+                                {{ __('Paiements de') }} {{ $student->first_name }} {{ $student->last_name }}
+                            </h2>
+                            <p class="text-gray-600 mt-1">{{ __('Gérez les paiements mensuels de l\'étudiant') }}</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <a href="{{ route('students.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                Retour aux étudiants
+                            </a>
+                            {{-- Suppression du bouton d'ajout manuel de paiement --}}
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    @if (session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    <!-- Statistiques -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="text-blue-600 text-sm font-medium">Total des paiements</div>
+                            <div class="text-2xl font-bold text-blue-800">{{ number_format($payments->sum('amount'), 2) }} DH</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="text-green-600 text-sm font-medium">Paiements à jour</div>
+                            <div class="text-2xl font-bold text-green-800">{{ $payments->where('status', 'paid')->count() }}</div>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <div class="text-red-600 text-sm font-medium">Paiements en retard</div>
+                            <div class="text-2xl font-bold text-red-800">{{ $payments->where('status', 'overdue')->count() }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Table des paiements -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Month') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Amount') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Payment Date') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Payment Method') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Status') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Notes') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($payments as $payment)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ \Carbon\Carbon::createFromFormat('Y-m', $payment->month)
+                                                ->locale('ar')
+                                                ->translatedFormat('F Y') }}
+                                        </div>
+
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ number_format($payment->amount, 2) }} DH</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ optional($payment->payment_date)->format('d/m/Y') ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $payment->payment_method ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($payment->status == 'paid')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            {{ __('Paid') }}
+                                        </span>
+                                        @elseif($payment->status == 'overdue')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            {{ __('Overdue') }}
+                                        </span>
+                                        @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            {{ __('On hold') }}
+                                        </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">{{ $payment->notes ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex space-x-2">
+                                            <a href="{{ route('students.payments.edit', [$student, $payment]) }}" class="text-indigo-600 hover:text-indigo-900">{{ __('Edit') }}</a>
+
+                                            @if($payment->status != 'paid')
+                                            <form action="{{ route('students.payments.mark-paid', [$student, $payment]) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-green-600 hover:text-green-900">Marquer payé</button>
+                                            </form>
+                                            @endif
+
+                                            @if($payment->status != 'overdue')
+                                            <form action="{{ route('students.payments.mark-overdue', [$student, $payment]) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-red-600 hover:text-red-900">Marquer retard</button>
+                                            </form>
+                                            @endif
+
+                                            <form action="{{ route('students.payments.destroy', [$student, $payment]) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900">{{ __('Delete') }}</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                        Aucun paiement enregistré pour cet étudiant.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
