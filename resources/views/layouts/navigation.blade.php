@@ -56,6 +56,13 @@
                                 </svg>
                                 {{ __('Students List') }}
                             </a>
+                            <a href="{{ route('memorization_progress.create') }}" 
+                               class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition duration-150 ease-in-out">
+                                <svg class="w-5 h-5 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20l9-4-9-4-9 4 9 4zm0-12l9-4-9-4-9 4 9 4z" />
+                                </svg>
+                                تسجيل التقدم في الحفظ
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -85,7 +92,7 @@
                          class="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[100] origin-top-right"
                          style="display: none;">
                         <div class="py-2">
-                            <a href="#" 
+                            <a href="{{ route('payments.all') }}" 
                                class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition duration-150 ease-in-out">
                                 <svg class="w-5 h-5 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
@@ -208,6 +215,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         {{ __('Add Student') }}
+                    </span>
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('memorization_progress.create')" :active="request()->routeIs('memorization_progress.create')" class="ml-4">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20l9-4-9-4-9 4 9 4zm0-12l9-4-9-4-9 4 9 4z" />
+                        </svg>
+                        تسجيل التقدم في الحفظ
                     </span>
                 </x-responsive-nav-link>
             </div>

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\MonthlyEntryController;
+use App\Http\Controllers\MemorizationProgressController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -25,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
@@ -37,6 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/students/{student}/payments/{payment}/mark-paid', [PaymentController::class, 'markAsPaid'])->name('students.payments.mark-paid');
     Route::post('/students/{student}/payments/{payment}/mark-overdue', [PaymentController::class, 'markAsOverdue'])->name('students.payments.mark-overdue');
 
+    // Global payments list
+    Route::get('/payments', [PaymentController::class, 'all'])->name('payments.all');
+
     // Monthly entries routes (general monthly payments not tied to students)
     Route::get('/monthly-entries', [MonthlyEntryController::class, 'index'])->name('monthly_entries.index');
     Route::get('/monthly-entries/create', [MonthlyEntryController::class, 'create'])->name('monthly_entries.create');
@@ -46,6 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/monthly-entries/{monthly_entry}', [MonthlyEntryController::class, 'destroy'])->name('monthly_entries.destroy');
     Route::post('/monthly-entries/{monthly_entry}/mark-paid', [MonthlyEntryController::class, 'markAsPaid'])->name('monthly_entries.mark-paid');
     Route::post('/monthly-entries/{monthly_entry}/mark-overdue', [MonthlyEntryController::class, 'markAsOverdue'])->name('monthly_entries.mark-overdue');
+
+    // Memorization progress routes
+    Route::get('/memorization-progress/create', [MemorizationProgressController::class, 'create'])->name('memorization_progress.create');
+    Route::post('/memorization-progress', [MemorizationProgressController::class, 'store'])->name('memorization_progress.store');
 });
 
 require __DIR__.'/auth.php';

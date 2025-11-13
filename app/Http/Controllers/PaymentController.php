@@ -128,4 +128,25 @@ class PaymentController extends Controller
         return redirect()->route('students.payments.index', $student)
             ->with('success', 'تم وضع علامة على الدفع كمتأخر.');
     }
+
+    /**
+     * Afficher tous les paiements de tous les étudiants
+     */
+    public function all(Request $request)
+    {
+        $query = Payment::with('student')
+            ->orderBy('payment_date', 'desc')
+            ->orderBy('month', 'desc');
+
+        $payments = $query->get();
+
+        $stats = [
+            'total_amount' => $payments->sum('amount'),
+            'paid' => $payments->where('status', 'paid')->count(),
+            'overdue' => $payments->where('status', 'overdue')->count(),
+            'pending' => $payments->where('status', 'pending')->count(),
+        ];
+
+        return view('payments.all', compact('payments', 'stats'));
+    }
 }

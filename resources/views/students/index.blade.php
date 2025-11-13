@@ -17,14 +17,14 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Success Message -->
             @if (session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                        <div class="text-green-800 font-medium">{{ session('success') }}</div>
-                    </div>
+            <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-green-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div class="text-green-800 font-medium">{{ session('success') }}</div>
                 </div>
+            </div>
             @endif
 
             <!-- Statistics Cards -->
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center">
                         <div class="p-3 bg-green-100 rounded-lg">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center">
                         <div class="p-3 bg-purple-100 rounded-lg">
@@ -89,16 +89,16 @@
                                 <select name="month" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="this.form.submit()">
                                     <option value="">{{ __('All Months') }}</option>
                                     @foreach(range(1, 12) as $month)
-                                        <option value="{{ $month }}" {{ request('month') == $month ? 'selected' : '' }}>
-                                            {{ DateTime::createFromFormat('!m', $month)->format('F') }}
-                                        </option>
+                                    <option value="{{ $month }}" {{ request('month') == $month ? 'selected' : '' }}>
+                                        {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </form>
                             @if(request('search') || request('month'))
-                                <a href="{{ route('students.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200">
-                                    {{ __('Clear Filters') }}
-                                </a>
+                            <a href="{{ route('students.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200">
+                                {{ __('Clear Filters') }}
+                            </a>
                             @endif
                         </div>
                     </div>
@@ -107,102 +107,128 @@
 
             <!-- Students Table -->
             @if($students->count() > 0)
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto mb-8">
-                    @php($thAlign = app()->getLocale() === 'ar' ? 'text-right' : 'text-left')
-                    <table class="min-w-full table-auto">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Photo') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Name') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Born') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Registered') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Birth Certificate') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($students as $student)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if($student->profile_photo)
-                                            <img src="{{ Storage::url($student->profile_photo) }}" alt="{{ __('Profile Photo') }}" class="h-10 w-10 rounded-full object-cover border border-gray-200">
-                                        @else
-                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
-                                                {{ substr($student->first_name, 0, 1) }}{{ substr($student->last_name, 0, 1) }}
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <div class="text-sm font-medium text-gray-900">{{ $student->first_name }} {{ $student->last_name }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
-                                        {{ \Carbon\Carbon::parse($student->birth_date)->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
-                                        {{ \Carbon\Carbon::parse($student->registration_date)->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                        @if($student->birth_certificate)
-                                            <a href="{{ Storage::url($student->birth_certificate) }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800" title="{{ __('View Certificate') }}" aria-label="{{ __('View Certificate') }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                </svg>
-                                                <span class="sr-only">{{ __('View Certificate') }}</span>
-                                            </a>
-                                        @else
-                                            <span class="text-gray-500">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                                        <div class="flex justify-center space-x-3">
-                                            <a href="{{ route('students.payments.index', $student) }}" class="text-green-600 hover:text-green-800" title="{{ __('Payments') }}" aria-label="{{ __('Payments') }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                <span class="sr-only">{{ __('Payments') }}</span>
-                                            </a>
-                                            <a href="{{ route('students.edit', $student) }}" class="text-blue-600 hover:text-blue-800" title="{{ __('Edit') }}" aria-label="{{ __('Edit') }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                                <span class="sr-only">{{ __('Edit') }}</span>
-                                            </a>
-                                            <button onclick="confirmDelete({{ $student->id }})" class="text-red-600 hover:text-red-800" title="{{ __('Delete') }}" aria-label="{{ __('Delete') }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                                <span class="sr-only">{{ __('Delete') }}</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto mb-8">
+                @php($thAlign = app()->getLocale() === 'ar' ? 'text-right' : 'text-left')
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Photo') }}</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Name') }}</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Born') }}</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Registered') }}</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Birth Certificate') }}</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($students as $student)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                @if($student->profile_photo)
+                                <img src="{{ Storage::url($student->profile_photo) }}" alt="{{ __('Profile Photo') }}" class="h-10 w-10 rounded-full object-cover border border-gray-200">
+                                @else
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
+                                    {{ substr($student->first_name, 0, 1) }}{{ substr($student->last_name, 0, 1) }}
+                                </div>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm font-medium text-gray-900">{{ $student->first_name }} {{ $student->last_name }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                                {{ \Carbon\Carbon::parse($student->birth_date)->format('d/m/Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                                {{ \Carbon\Carbon::parse($student->registration_date)->format('d/m/Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                @if($student->birth_certificate)
+                                <a href="{{ Storage::url($student->birth_certificate) }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800" title="{{ __('View Certificate') }}" aria-label="{{ __('View Certificate') }}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span class="sr-only">{{ __('View Certificate') }}</span>
+                                </a>
+                                @else
+                                <span class="text-gray-500">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                <div class="flex justify-center items-center gap-3 rtl:space-x-reverse">
 
-                <!-- Pagination -->
-                <div class="bg-white rounded-lg p-4 border border-gray-200">
-                    {{ $students->links() }}
-                </div>
+                                    {{-- Détails --}}
+                                    <a href="{{ route('students.show', $student) }}"
+                                        class="p-2 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-800 transition"
+                                        title="{{ __('تفاصيل') }}" aria-label="{{ __('تفاصيل') }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
+
+                                    {{-- Paiements --}}
+                                    <a href="{{ route('students.payments.index', $student) }}"
+                                        class="p-2 rounded-full bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-800 transition"
+                                        title="{{ __('الدفعات') }}" aria-label="{{ __('الدفعات') }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </a>
+
+                                    {{-- Modifier --}}
+                                    <a href="{{ route('students.edit', $student) }}"
+                                        class="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition"
+                                        title="{{ __('تعديل') }}" aria-label="{{ __('تعديل') }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+
+                                    {{-- Supprimer --}}
+                                    <button onclick="confirmDelete({{ $student->id }})"
+                                        class="p-2 rounded-full bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-800 transition"
+                                        title="{{ __('حذف') }}" aria-label="{{ __('حذف') }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                {{ $students->links() }}
+            </div>
             @else
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="text-center py-12">
-                        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900">{{ __('No students found') }}</h3>
-                        <p class="mt-2 text-sm text-gray-500">{{ __('Get started by creating your first student.') }}</p>
-                        <div class="mt-6">
-                            <a href="{{ route('students.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-lg font-semibold text-sm text-white hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md">
-                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                                {{ __('Add New Student') }}
-                            </a>
-                        </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">{{ __('No students found') }}</h3>
+                    <p class="mt-2 text-sm text-gray-500">{{ __('Get started by creating your first student.') }}</p>
+                    <div class="mt-6">
+                        <a href="{{ route('students.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-lg font-semibold text-sm text-white hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            {{ __('Add New Student') }}
+                        </a>
                     </div>
                 </div>
+            </div>
             @endif
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\MemorizationProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -34,6 +35,55 @@ class StudentController extends Controller
     public function create()
     {
         return view('students.create');
+    }
+
+    /**
+     * Display the specified student details.
+     */
+    public function show(Student $student)
+    {
+        // Last 10 memorization progress entries for this student
+        $progress = MemorizationProgress::where('student_id', $student->id)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(10)
+            ->get();
+
+        // Build weekly memorization pace and acceleration data for chart
+        $allProgress = MemorizationProgress::where('student_id', $student->id)
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $locale = app()->getLocale();
+        $weeklyBuckets = [];
+        foreach ($allProgress as $mp) {
+            $date = \Carbon\Carbon::parse($mp->date);
+            $startOfWeek = $date->copy()->startOfWeek();
+            $endOfWeek = $date->copy()->endOfWeek();
+            $key = $startOfWeek->format('Y-m-d');
+            $verses = max(0, (int)$mp->verse_end - (int)$mp->verse_start + 1);
+            if (!isset($weeklyBuckets[$key])) {
+                // Label as week range localized
+                $label = $startOfWeek->locale($locale)->isoFormat('D MMM') . ' – ' . $endOfWeek->locale($locale)->isoFormat('D MMM');
+                $weeklyBuckets[$key] = ['label' => $label, 'sum' => 0];
+            }
+            $weeklyBuckets[$key]['sum'] += $verses;
+        }
+
+        ksort($weeklyBuckets);
+        $weeklyLabels = array_column($weeklyBuckets, 'label');
+        $weeklyCounts = array_map(function ($b) { return (int)$b['sum']; }, array_values($weeklyBuckets));
+        $weeklyAcceleration = [];
+        for ($i = 0; $i < count($weeklyCounts); $i++) {
+            $weeklyAcceleration[$i] = $i === 0 ? 0 : ($weeklyCounts[$i] - $weeklyCounts[$i - 1]);
+        }
+
+        $chartData = [
+            'labels' => $weeklyLabels,
+            'counts' => $weeklyCounts,
+            'accel' => $weeklyAcceleration,
+        ];
+        return view('students.show', compact('student', 'progress', 'chartData'));
     }
 
     /**
